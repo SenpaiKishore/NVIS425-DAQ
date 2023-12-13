@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>NVIS 425DAQ</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="node_modules/chart.js/dist/chart.js"></script>
+</head>
+<body>
+    <header>
+        <div class="left-header">
+            <img id="header-logo" src="nvisLogo.ico" alt="Logo">
+            <div id="header-company">Nvis Technologies Pvt Ltd</div>
+        </div>
+        <div id="header-title">NVIS425A Data Acquisition System</div>
+    </header>
+    <div class="main-wrapper">
+        <div class="container">
+            <div class="chart-wrapper">
+                <canvas id="chart1"></canvas>
+            </div>
+            <div class="chart-wrapper">
+                <canvas id="chart2"></canvas>
+            </div>
+            <div class="chart-wrapper">
+                <canvas id="chart3"></canvas>
+            </div>
+            <div class="chart-wrapper">
+                <canvas id="chart4"></canvas>
+            </div>
+            <div class="chart-wrapper">
+                <canvas id="chart5"></canvas>
+            </div>
+        </div>
+        <div class="right-container">
+            <div class="port-container">
+                <div class="com-port-selector">
+                    <label for="comPorts">Select COM Port:</label>
+                    <select id="comPorts">
+                        <!-- Options will be dynamically added here -->
+                    </select>
+                </div>
+                <button id="button0">Start DAQ</button>
+            </div>
+            <div class="button-container">
+                <button id="button1">Button 1</button>
+                <button id="button2">Button 2</button>
+                <button id="button3">Button 3</button>
+                <button id="button4">Button 4</button>
+                <button id="button5">Button 5</button>
+            </div>
+            <div class="stats-container">
+                <label class="statsLabel">Battery Parameters</label>
+                <div class="statValues">
+                    <div id="values-container">
+                        <div id="value1">SOC:<span id="current-value1">0</span><span>%</span></div>
+                        <div id="value2">DOD:<span id="current-value2">0</span><span>%</span></div>
+                        <div id="value3">Volt:<span id="current-value3">0</span><span>V</span></div>
+                        <div id="value4">Amp:<span id="current-value4">0</span><span>A</span></div>
+                        <div id="value5">Watt:<span id="current-value5">0</span><span>W</span></div>
+                    </div>
+                </div>
+                <div class="battery">
+                    <div id="battery-container">
+                        <div id="progressBar"></div>
+                    </div>
+                    <div class="batteryHead"></div>
+                </div>
+            </div>
+            
+            <button id="downloadButton">Download Data(CSV)</button>
+        </div>
+    </div>    
+    <script src="renderer.js"></script>
+</body>
+ 
+</html>
