@@ -8,10 +8,12 @@
 <body>
     <header>
         <div class="left-header">
-            <img id="header-logo" src="nvisLogo.ico" alt="Logo">
-            <div id="header-company">Nvis Technologies Pvt Ltd</div>
+            <img id="header-logo" src="logo.png" alt="Logo">
         </div>
-        <div id="header-title">NVIS425A Data Acquisition System</div>
+        <div class="right-header">
+            <div id="header-title">NVIS425 Lead-Acid Battery Charateristics Training System</div>
+            <p>Data Acquisition System</p>
+        </div>
     </header>
     <div class="main-wrapper">
         <div class="container">
@@ -41,13 +43,6 @@
                 </div>
                 <button id="button0">Start DAQ</button>
             </div>
-            <div class="button-container">
-                <button id="button1">Button 1</button>
-                <button id="button2">Button 2</button>
-                <button id="button3">Button 3</button>
-                <button id="button4">Button 4</button>
-                <button id="button5">Button 5</button>
-            </div>
             <div class="stats-container">
                 <label class="statsLabel">Battery Parameters</label>
                 <div class="statValues">
@@ -67,7 +62,7 @@
                 </div>
             </div>
             
-            <button id="downloadButton">Download Data(CSV)</button>
+            <button id="downloadButton">Download Data</button>
         </div>
     </div>    
     <script src="renderer.js"></script>

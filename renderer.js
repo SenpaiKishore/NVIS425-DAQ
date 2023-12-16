@@ -209,20 +209,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
-    for (let i = 0; i < 6; i++) {
-        updateButtonColor(i);
-    }
-    for (let i = 1; i < 6; i++) {
-        document.getElementById(`button${i}`).addEventListener('click', () => {
-            dataToSend[i] = dataToSend[i] === 0 ? 1 : 0;
-            updateButtonColor(i);
-            // Call the sendData function once immediately to reflect the change
-            const characterToSend = getCharacterToSend(i);
-            ipcRenderer.send('send-to-arduino', characterToSend);
-            console.log("Sent: ", characterToSend);
-            sendData();
-        });
-    }
+    
     document.getElementById(`button0`).addEventListener('click', () => {
         const selectedPort = document.getElementById('comPorts').value;
         ipcRenderer.send('start-daq', selectedPort);

@@ -19,12 +19,26 @@ header {
 }
 
 .left-header {
-background: white;
-display: flex;
-align-items: center;
-padding: 15px;
-border-right: 2px solid #000; /* Right border for company name */
+    background: white;
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-right: 2px solid #000; /* Right border for company name */
+    margin-left: 50px;
 }
+
+.right-header {
+width: 100%;
+text-align: center;
+}
+
+.right-header p{
+   margin: 0;
+   font-weight: bold;
+   margin-top: 8px;
+   font-size: 18px;
+}
+    
 
 #header-logo, #header-title, #header-company {
 font-size: 18px;
@@ -32,9 +46,8 @@ font-weight: bold;
 flex: 1;
 }
 
-#header-logo {
-width: 50px;   
-height: 50px;   
+#header-logo {  
+height: 55px;   
 object-fit: contain;
 margin-left: -50px; /* Pushes all other elements to the right */
 }
@@ -42,7 +55,6 @@ margin-left: -50px; /* Pushes all other elements to the right */
 #header-title {
 flex-grow: 1;
 text-align: center;
-margin-left: 20px; /* Space between border and title */
 font-size: 22px;
 }
 
