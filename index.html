@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>NVIS 425DAQ</title>
+    <title>NVIS425 DAQ</title>
     <link rel="stylesheet" href="styles.css">
     <script src="node_modules/chart.js/dist/chart.js"></script>
 </head>
@@ -11,7 +11,7 @@
             <img id="header-logo" src="logo.png" alt="Logo">
         </div>
         <div class="right-header">
-            <div id="header-title">NVIS425 Lead-Acid Battery Charateristics Training System</div>
+            <div id="header-title">NVIS425 Lead-Acid Battery Characteristics Training System</div>
             <p>Data Acquisition System</p>
         </div>
     </header>
@@ -41,7 +41,9 @@
                         <!-- Options will be dynamically added here -->
                     </select>
                 </div>
-                <button id="button0">Start DAQ</button>
+
+                <button class="refreshport" onclick="ipcRenderer.send('refresh-ports')">Refresh</button>
+                <button class="startButton" id="button0">Start DAQ</button>
             </div>
             <div class="stats-container">
                 <label class="statsLabel">Battery Parameters</label>

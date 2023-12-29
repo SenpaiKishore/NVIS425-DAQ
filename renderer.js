@@ -1,13 +1,9 @@
 const { ipcRenderer } = require('electron');
 const { Chart, LineController, LineElement, PointElement, LinearScale, CategoryScale, Filler, Legend, Title, Tooltip } = require('chart.js');
-const fs = require('fs');
-const path = require('path');
 
 Chart.register(LineController, LineElement, PointElement, LinearScale, CategoryScale, Filler, Legend, Title, Tooltip);
 
 let dataToSend = [0, 0, 0, 0, 0, 0]; 
-const characters = ['A', 'B', 'C', 'D', 'E', 'F'];
-let character;
 const charts = [];
 let csvData = {
     chart1: [],
@@ -16,6 +12,7 @@ let csvData = {
     chart4: [],
     chart5: []
 };
+
 function updateButtonColor(btIndex) {
     const button = document.getElementById(`button${btIndex}`);
     if(btIndex == 0){
@@ -24,45 +21,20 @@ function updateButtonColor(btIndex) {
         state = dataToSend[btIndex];
     }
     if (state === 1) {
-        button.classList.remove('button-off');
         button.classList.add('button-on');
     } else {
         button.classList.remove('button-on');
-        button.classList.add('button-off');
     }
-}
-
-function getCharacterToSend(btIndex) {
-    // This function determines which character to send based on button states
-    let characterToSend = '';
-    state = dataToSend[btIndex]
-    if (state === 1) {
-        characterToSend = characters[btIndex]; // Uppercase if the button is on
-    } else if (state === 0) {
-        characterToSend = characters[btIndex].toLowerCase(); // Lowercase if the button is off
-    }
-    character = characterToSend;
-    return characterToSend;
 }
 
 function continuouslySendData() {
-    // This function sends data continuously every 100ms
     if (dataToSend[0]) {
         ipcRenderer.send('send-to-arduino', 'A');
         console.log("Sent: ", 'A');
     } 
 }
 
-function sendData() {
-    // This function sends data continuously every 100ms
-    const characterToSend = character;
-    if (characterToSend &&  (characterToSend == 'A' || characterToSend == 'a')) {
-        ipcRenderer.send('send-to-arduino', characterToSend);
-        console.log("Sent: ", characterToSend);
-    } 
-}
 function downloadAllGraphsCSV() {
-    // Assuming all charts have the same number of data points and labels
     if (charts.length === 0 || charts[0].data.labels.length === 0) {
         console.error('No data to download');
         return;
@@ -70,15 +42,14 @@ function downloadAllGraphsCSV() {
 
     let csvContent = "data:text/csv;charset=utf-8,";
     let maxLength = Math.max(...Object.values(csvData).map(arr => arr.length));
-    
-    // Add header row - Time, Graph 1, Graph 2, ...
+
     let headerRow = "Time,";
-    headerRow += charts.map((_, index) => `Graph ${index + 1}`).join(',');
+    let headerRows = ['State of Charge(SOC)', 'Depth of Discharge(DOD)', 'Voltage(V)', 'Current(Amp)', 'Power(Watt)']
+    headerRow += charts.map((_, index) => `${headerRows[index]}`).join(',');
     csvContent += headerRow + "\n";
 
-    // Add data rows
     for (let i = 0; i < maxLength; i++) {
-        let row = `${i},`; // Replace with actual timestamp or index if available
+        let row = `${i},`;
         Object.keys(csvData).forEach((key, index, array) => {
             row += csvData[key][i] !== undefined ? csvData[key][i] : "";
             if (index < array.length - 1) {
@@ -88,14 +59,12 @@ function downloadAllGraphsCSV() {
         csvContent += row + "\n";
     }
 
-    // Encode and create a link to download
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
     link.setAttribute("download", "all_graphs_data.csv");
     document.body.appendChild(link);
 
-    // Trigger download and remove link
     link.click();
     document.body.removeChild(link);
 }
@@ -108,9 +77,10 @@ function updateChartScales(chart, data) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    ipcRenderer.send('refresh-ports');
     ipcRenderer.on('list-ports', (event, ports) => {
         const comPortsSelect = document.getElementById('comPorts');
-        comPortsSelect.innerHTML = ''; // Clear existing options
+        comPortsSelect.innerHTML = '';
     
         ports.forEach(port => {
             const option = document.createElement('option');
@@ -119,29 +89,18 @@ document.addEventListener('DOMContentLoaded', () => {
             comPortsSelect.appendChild(option);
         });
     });
-
+    let chartColors = ['rgba(153, 102, 255, 1)', 'rgba(0, 123, 255, 1)', 'rgba(255, 99, 132, 1)', 'rgba(75, 192, 192, 1)', 'rgba(255, 153, 0, 1)']
+    let tlabel = ['State of Charge (SOC)', 'Depth of Discharge (DOD)', 'Battery Voltage (V)', 'Battery Current (A)', 'Battery Power (Watt)'];
     for (let i = 1; i <= 5; i++) {
         const ctx = document.getElementById(`chart${i}`).getContext('2d');
-        let tlabel;
-        if(i==1){
-            tlabel = 'State of Charge (SOC)'
-        }else if(i==2){
-            tlabel = 'Depth of Discharge (DOD)'
-        }else if(i==3){
-            tlabel = 'Battery Voltage (V)'
-        } else if(i==4){
-            tlabel = 'Battery Current (A)'
-        } else if(i==5){
-            tlabel = 'Battery Power (Watt)'
-        }
         charts.push(new Chart(ctx, {
             type: 'line',
             data: {
                 labels: [],
                 datasets: [{
-                    label: tlabel,
+                    label: tlabel[i - 1],
                     data: [],
-                    borderColor: '#007bff',
+                    borderColor: chartColors[i - 1],
                     borderWidth: 2
                     
                 }]
@@ -153,7 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     },
                     title: {
                         display: true,
-                        text: tlabel,
+                        text: tlabel[i - 1],
                         color: 'black',
                     }
                 },
@@ -212,13 +171,18 @@ document.addEventListener('DOMContentLoaded', () => {
     
     document.getElementById(`button0`).addEventListener('click', () => {
         const selectedPort = document.getElementById('comPorts').value;
-        ipcRenderer.send('start-daq', selectedPort);
-        dataToSend[0] = dataToSend[0] === 0 ? 1 : 0;
-        updateButtonColor(0);
-        if (document.getElementById(`button0`).textContent == 'Start DAQ'){
-            document.getElementById(`button0`).textContent = 'Stop DAQ'
+        if(selectedPort == ''){
+            alert("Please select a valid port")
         } else {
-            document.getElementById(`button0`).textContent = 'Start DAQ'
+            ipcRenderer.send('start-daq', selectedPort);
+            dataToSend[0] = dataToSend[0] === 0 ? 1 : 0;
+            updateButtonColor(0);
+            if (document.getElementById(`button0`).textContent == 'Start DAQ'){
+                document.getElementById(`button0`).textContent = 'Stop DAQ'
+            } else {
+                alert("Data acquisition has stopped.")
+                document.getElementById(`button0`).textContent = 'Start DAQ'
+            }
         }
     });
     setInterval(continuouslySendData, 500);

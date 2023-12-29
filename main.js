@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
+const { app, BrowserWindow, ipcMain, Menu } = require('electron');
 const SerialPort = require('serialport');
 const Readline = require('@serialport/parser-readline');
 const path = require('path');
@@ -7,14 +7,16 @@ let openPort = null;
 
 function createWindow () {
   const win = new BrowserWindow({
-    width: 1080,
+    width: 1180,
     height: 800,
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false
     },
-    icon: path.join(__dirname, 'nvisLogo.ico')
+    icon: path.join(__dirname, 'icon.ico')
   });
+
+  win.setMenu(null);
 
   win.loadFile('index.html');
   
@@ -24,10 +26,11 @@ function createWindow () {
     }).catch(err => {
         console.error("Error listing ports:", err);
     });
-}
-
-// Periodically refresh ports every 2 seconds (or your preferred interval)
-  setInterval(refreshPorts, 2000);
+  }
+  ipcMain.on('refresh-ports', (event) => {
+    refreshPorts();
+  })
+    
 
   ipcMain.on('start-daq', (event, selectedPort) => {
     if (openPort) {

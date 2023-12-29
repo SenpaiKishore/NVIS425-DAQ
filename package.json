@@ -4,7 +4,7 @@
   "description": "425DAQ",
   "main": "main.js",
   "author": "NVIS",
-  "license": "ISC",
+  "license": "UNLICENSED",
   "scripts": {
     "postinstall": "electron-rebuild",
     "pack": "electron-builder --dir",
@@ -28,8 +28,17 @@
     "appId": "com.nvis.425daq",
     "productName": "425DAQ",
     "win": {
-      "target": "msi",
-      "icon": "nvisLogo.ico"
+      "target": "nsis",
+      "arch": ["x64", "ia32"],
+      "icon": "icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "installerIcon": "icon.ico",
+      "uninstallerIcon": "icon.ico",
+      "uninstallDisplayName": "NVIS425DAQ Uninstaller",
+      "license": "license.md",
+      "allowToChangeInstallationDirectory": true
     },
     "asarUnpack": [
       "node_modules/serialport/**"
